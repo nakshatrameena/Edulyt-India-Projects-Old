@@ -188,3 +188,16 @@ FROM spend
 JOIN cb ON spend.costomer = cb.customer
 GROUP BY MONTH(spend.monthss)
 ORDER BY monthly;
+
+/* -- 11 Impose an interest rate of 2.9% for each customer for any due amount */
+
+SELECT
+ SUM(spend.Amount) AS monthly_spend,SUM(repayment.Amount) AS monthly_repayment,(SUM(repayment.Amount) -SUM(spend.Amount)) ,
+ CASE
+      WHEN SUM(repayment.Amount)>SUM(spend.Amount)  THEN ((SUM(repayment.Amount) -SUM(spend.Amount))* 2.9 )
+ ELSE 0
+ END as penalty_amount
+ FROM spend  
+ join repayment  on spend.Costomer = repayment.Costomer 
+GROUP BY spend.costomer
+;
